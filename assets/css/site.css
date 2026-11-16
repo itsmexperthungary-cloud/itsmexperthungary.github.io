@@ -124,3 +124,5 @@ img{max-width:100%}
 a{color:#8E2F3C}a:hover{color:#6E2430}
 p,li span{text-align:justify;hyphens:auto}
 @media (max-width:640px){p,li span,h1,h2,h3{text-align:left!important}}
+h1,h2,h3{overflow-wrap:anywhere;hyphens:auto}
+@media (max-width:640px){html[lang=hu] h1{font-size:34px!important}}
