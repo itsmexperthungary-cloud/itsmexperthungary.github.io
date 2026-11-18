@@ -123,6 +123,7 @@ body{margin:0;background:#FFFFFF}
 img{max-width:100%}
 a{color:#8E2F3C}a:hover{color:#6E2430}
 @media (max-width:640px){p,li span,h1,h2,h3{text-align:left!important}}
-h1,h2,h3{overflow-wrap:break-word}
+h1,h2,h3{overflow-wrap:break-word;max-width:100%;height:auto!important}
 @media (max-width:640px){html[lang=hu] h1{font-size:34px!important}}
+a[style*="min-height: 52px"]{padding-top:10px!important;padding-bottom:10px!important;box-sizing:border-box}
 @media (max-width:400px){html[lang=en] h1{font-size:min(30px,8.4vw)!important}}
