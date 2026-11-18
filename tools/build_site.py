@@ -124,6 +124,7 @@ def page_html(src_name):
     s = open(os.path.join(SRC, src_name), encoding='utf-8').read()
     title = re.search(r'<title>(.*?)</title>', s, re.S).group(1).strip()
     body = re.search(r'<x-dc>(.*)</x-dc>', s, re.S).group(1)
+    helmet_css = ''.join(re.findall(r'<style>(.*?)</style>', re.search(r'<helmet>(.*?)</helmet>', body, re.S).group(1), re.S))
     body = re.sub(r'<helmet>.*?</helmet>', '', body, flags=re.S).strip()
     body = body.replace('{{accent}}', ACCENT)
     body = body.replace('onClick="{{prev}}"', 'data-slide="-1"').replace('onClick="{{next}}"', 'data-slide="1"')
@@ -192,6 +193,7 @@ document.querySelectorAll('[data-slide]').forEach(function (b) {
 <link rel="apple-touch-icon" href="{up}apple-touch-icon.png">
 <link rel="preload" href="{up}assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{up}assets/css/site.css">
+<style>{helmet_css.strip()}</style>
 </head>
 <body>
 '''
