@@ -194,6 +194,7 @@ document.querySelectorAll('[data-slide]').forEach(function (b) {
 <link rel="preload" href="{up}assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{up}assets/css/site.css">
 <style>{helmet_css.strip()}</style>
+<script defer src="https://cloud.umami.is/script.js" data-website-id="4b62bade-07a9-4410-913f-03182b959581" data-domains="itsmexperthungary.eu"></script>
 </head>
 <body>
 '''
