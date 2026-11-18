@@ -236,7 +236,7 @@ def icons():
 WJ = '\u2060'  # word joiner: invisible, forbids a line break on both sides
 COMPOUND = re.compile(r'(?<=\w)(-|\))(?=[\w(])')
 PHRASES = ['Service management', 'service management', 'Jira Service Management', 'Microsoft 365', 'ITIL 4',
-           'Change Enablement', 'Azure DevOps', 'Jira Assets', 'A. Krisztina Juhász', '9+ years', '9+ év',
+           'Change Enablement', 'Azure DevOps', 'Jira Assets', 'A. Krisztina Juhász', 'Juhász A. Krisztina', '9+ years', '9+ év',
            'IT service', 'IT-szolgáltatás', 'IT service management', 'Change Enablement', 'Knowledge Management', 'customer journey', 'stakeholder map', 'operating model', 'continual improvement', 'maturity snapshot', 'Maturity snapshot', 'maturity assessment', 'improvement roadmap', 'service review', 'service owner', 'service desk', 'process onboarding', 'Quality Gate', 'health check']
 def keep_compounds(html):
     """Never split hyphenated words (IT-szervezet, third-party) or fixed phrases across lines."""
