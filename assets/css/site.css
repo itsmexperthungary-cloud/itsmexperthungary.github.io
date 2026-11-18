@@ -122,7 +122,7 @@ html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{margin:0;background:#FFFFFF}
 img{max-width:100%}
 a{color:#8E2F3C}a:hover{color:#6E2430}
-p,li span{text-align:justify;hyphens:auto}
 @media (max-width:640px){p,li span,h1,h2,h3{text-align:left!important}}
-h1,h2,h3{overflow-wrap:anywhere;hyphens:auto}
+h1,h2,h3{overflow-wrap:break-word}
 @media (max-width:640px){html[lang=hu] h1{font-size:34px!important}}
+@media (max-width:400px){html[lang=en] h1{font-size:min(30px,8.4vw)!important}}

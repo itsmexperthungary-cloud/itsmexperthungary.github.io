@@ -26,11 +26,17 @@ BLOBS = {
     '92b02e9d56b2268a377ae2434e75f973': ('krisztina-juhasz-books.jpg', 'assets/img/books.jpg'),
     '4aa089631036ff62b45338bb80f6aa7c': ('krisztina-juhasz-health-check-crop.jpg', 'assets/img/health-check.jpg'),
     '257e101c1156cd96bd268366c643cb98': (None, 'assets/A_Krisztina_Juhasz_CV.pdf'),
+    'a397690d0bb930f1b60abb7ead28d4f5': ('badges/az-900.png', 'assets/img/badges/az-900.png'),
+    '7b0a708930439e6dbda676366460a64c': ('badges/ab-730.png', 'assets/img/badges/ab-730.png'),
+    '4bef5be650a643d98f39d5bc9dfa9bfa': ('badges/itil4-strategic-leader-hd.png', 'assets/img/badges/itil4-strategic-leader.png'),
+    '0aeef7efdb0b6c8dfec9c53ef7a519f0': ('badges/itil4-hvit-hd.png', 'assets/img/badges/itil4-hvit.png'),
+    '84ba9e585ca4ab924db2d6b1226542a1': ('badges/itil4-dsv-hd.png', 'assets/img/badges/itil4-dsv.png'),
+    'b4179e62ac858efeb883407223aa1a74': ('badges/itil4-foundation-hd.png', 'assets/img/badges/itil4-foundation.png'),
 }
 
 
 HU = json.load(open(os.path.join(HERE, 'hu.json'), encoding='utf-8'))
-KEEP = re.compile(r'^(A\. Krisztina Juhász|\d+|[.;]|ITSM Health Check|itsmexperthungary@gmail\.com|ugyfelszolgalat@naih\.hu|www\.naih\.hu|ITIL 4 .*|Microsoft AI Business Professional \(AB-730\)|Azure Fundamentals \(AZ-900\)|ServiceNow Certified System Administrator|GitHub, Inc\., 88 Colin.*|width=device-width.*|English|Magyar|ITSM Health Check – A\. Krisztina Juhász)$')
+KEEP = re.compile(r'(?s)^(A\. Krisztina Juhász|\d+|[.;]|ITSM Health Check|itsmexperthungary@gmail\.com|ugyfelszolgalat@naih\.hu|www\.naih\.hu|ITIL 4 .*|Microsoft AI Business Professional \(AB-730\)|Azure Fundamentals \(AZ-900\)|ServiceNow Certified System Administrator|GitHub, Inc\., 88 Colin.*|width=device-width.*|English|Magyar|document\..*|PeopleCert|Microsoft|Microsoft · A[BZ]-\d+|Microsoft Certified: .*|.* badge|ITSM Health Check – A\. Krisztina Juhász)$')
 MISSING = set()
 
 def nav_switch(html, href, label, lang):
@@ -66,7 +72,7 @@ def make_hu(out_name, html):
     head, body = h.split('<body>', 1)
     head = re.sub(r'(content)="([^"]+)"', tr_attr, head)
     head = re.sub(r'>([^<]+)<', tr_segment, head)
-    body = re.sub(r'(alt)="([^"]+)"', tr_attr, body)
+    body = re.sub(r'(alt|aria-label)="([^"]+)"', tr_attr, body)
     body = re.sub(r'>([^<]+)<', tr_segment, body)
     h = head + '<body>' + body
     for a in ('href="assets/', 'src="assets/', 'href="favicon', 'href="apple-touch'):
@@ -99,6 +105,20 @@ def page_html(src_name):
     body = re.search(r'<x-dc>(.*)</x-dc>', s, re.S).group(1)
     body = re.sub(r'<helmet>.*?</helmet>', '', body, flags=re.S).strip()
     body = body.replace('{{accent}}', ACCENT)
+    body = body.replace('onClick="{{prev}}"', 'data-slide="-1"').replace('onClick="{{next}}"', 'data-slide="1"')
+    # badge tiles without a verification link yet: not clickable, no "Verify" label
+    body = re.sub(r'<a href="#verify" (style="[^"]*")>(.*?)<span style="margin-top: auto;[^"]*">Verify ↗</span></a>',
+                  lambda m: f'<div {m.group(1)}>{m.group(2)}</div>', body, flags=re.S)
+    if 'cert-track' in body:
+        body += '''
+<script>
+document.querySelectorAll('[data-slide]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var t = document.getElementById('cert-track');
+    if (t) t.scrollBy({ left: Number(b.dataset.slide) * 184, behavior: 'smooth' });
+  });
+});
+</script>'''
     if '{{' in body:
         raise SystemExit(f'Unresolved template hole in {src_name}')
     for bid, (_, path) in BLOBS.items():
@@ -168,8 +188,24 @@ def icons():
         d.text(((big - (bb[2] - bb[0])) / 2 - bb[0], (big - (bb[3] - bb[1])) / 2 - bb[1]), 'KJ', font=f, fill='white')
         im.resize((size, size), Image.LANCZOS).save(f'{OUT}/{name}')
 
+WJ = '\u2060'  # word joiner: invisible, forbids a line break on both sides
+COMPOUND = re.compile(r'(?<=\w)(-|\))(?=[\w(])')
+PHRASES = ['Service management', 'service management', 'Jira Service Management', 'Microsoft 365', 'ITIL 4',
+           'Change Enablement', 'Azure DevOps', 'Jira Assets', 'A. Krisztina Juhász', '9+ years', '9+ év',
+           'IT service', 'IT-szolgáltatás']
+def keep_compounds(html):
+    """Never split hyphenated words (IT-szervezet, third-party) or fixed phrases across lines."""
+    head, sep, body = html.partition('<body')
+    parts = re.split(r'(<script.*?</script>|<style.*?</style>|<[^>]+>)', body, flags=re.S)
+    for i in range(0, len(parts), 2):
+        t = COMPOUND.sub(lambda m: m.group(1) + WJ, parts[i])
+        for ph in PHRASES:
+            t = t.replace(ph, ph.replace(' ', '\u00a0'))
+        parts[i] = t
+    return head + sep + ''.join(parts)
+
 def main():
-    for sub in ('assets/css', 'assets/fonts', 'assets/img'):
+    for sub in ('assets/css', 'assets/fonts', 'assets/img', 'assets/img/badges'):
         os.makedirs(f'{OUT}/{sub}', exist_ok=True)
     css = fonts_css() + '''
 
@@ -177,10 +213,10 @@ html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{margin:0;background:#FFFFFF}
 img{max-width:100%}
 a{color:#8E2F3C}a:hover{color:#6E2430}
-p,li span{text-align:justify;hyphens:auto}
 @media (max-width:640px){p,li span,h1,h2,h3{text-align:left!important}}
-h1,h2,h3{overflow-wrap:anywhere;hyphens:auto}
+h1,h2,h3{overflow-wrap:break-word}
 @media (max-width:640px){html[lang=hu] h1{font-size:34px!important}}
+@media (max-width:400px){html[lang=en] h1{font-size:min(30px,8.4vw)!important}}
 '''
     open(f'{OUT}/assets/css/site.css', 'w', encoding='utf-8').write(css)
     for bid, (local, path) in BLOBS.items():
@@ -192,8 +228,8 @@ h1,h2,h3{overflow-wrap:anywhere;hyphens:auto}
         html = alternates(html, BASE + page_path, BASE + 'hu/' + page_path)
         hu = make_hu(name, html)
         html = nav_switch(html, 'hu/' + page_path, 'Magyar', 'hu')
-        open(f'{OUT}/{name}', 'w', encoding='utf-8').write(html)
-        open(f'{OUT}/hu/{name}', 'w', encoding='utf-8').write(hu)
+        open(f'{OUT}/{name}', 'w', encoding='utf-8').write(keep_compounds(html))
+        open(f'{OUT}/hu/{name}', 'w', encoding='utf-8').write(keep_compounds(hu))
     if MISSING:
         raise SystemExit('Untranslated: ' + json.dumps(sorted(MISSING), ensure_ascii=False, indent=1))
     og_image()
