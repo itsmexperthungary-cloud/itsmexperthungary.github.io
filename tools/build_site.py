@@ -269,7 +269,7 @@ a[style*="min-height: 52px"]{padding-top:10px!important;padding-bottom:10px!impo
 @media (max-width:640px){
 header>div{padding:10px 16px!important;gap:8px!important;flex-wrap:nowrap!important}
 header>div>a:first-child>span:first-child{font-size:18px!important}
-#about p[aria-hidden]{font-size:38px!important}
+#about p[aria-hidden]{font-size:30px!important;text-align:right!important}
 header>div>a:first-child>span:last-child{font-size:11px!important}
 .menu-toggle{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin-left:auto;padding:0;border:1px solid #CFC4BA;border-radius:8px;background:#FFFFFF;color:#1B2A47;cursor:pointer}
 .menu-toggle .i-close{display:none}
