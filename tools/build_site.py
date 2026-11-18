@@ -31,9 +31,12 @@ SITE_PATH = {src: out for src, (out, _) in PAGES.items()}
 
 def rel_link(from_out, to_out):
     """Relative href from one output page to another (both relative to the site root)."""
-    up = '../' * from_out.count('/')
+    import posixpath
     target = to_out[:-len('index.html')] if to_out.endswith('index.html') else to_out
-    return (up + target) or './'
+    rel = posixpath.relpath(target or '.', posixpath.dirname(from_out) or '.')
+    if rel == '.':
+        return './'
+    return rel + '/' if target.endswith('/') or not target else rel
 
 def twin(src):
     return src.replace('-HU.dc.html', '.dc.html') if '-HU' in src else src.replace('.dc.html', '-HU.dc.html')
@@ -231,7 +234,7 @@ def main():
         os.makedirs(f'{OUT}/{sub}', exist_ok=True)
     css = fonts_css() + '''
 
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:96px}
 body{margin:0;background:#FFFFFF}
 img{max-width:100%}
 a{color:#8E2F3C}a:hover{color:#6E2430}
@@ -239,6 +242,14 @@ a{color:#8E2F3C}a:hover{color:#6E2430}
 h1,h2,h3{overflow-wrap:break-word;max-width:100%!important;height:auto!important}
 a[style*="min-height: 52px"]{padding-top:10px!important;padding-bottom:10px!important;box-sizing:border-box}
 @media (max-width:640px){div[style*="flex-direction: column; align-items: flex-end"]{align-items:flex-start!important}div[style*="justify-content: flex-end"]{justify-content:flex-start!important}}
+@media (max-width:640px){
+header>div{padding:10px 16px!important;gap:8px!important;flex-wrap:nowrap!important}
+header>div>a:first-child{font-size:18px!important;white-space:nowrap}
+header nav{gap:6px!important;flex-wrap:nowrap!important}
+header nav a[style*="background"]{padding:0 14px!important;min-height:40px!important;white-space:nowrap}
+header nav a[hreflang]{min-width:40px!important}
+header nav a[href^="#"]:not([style*="background"]),header nav a[href="./"],header nav a[href="../"]{display:none!important}
+}
 @media (max-width:400px){h1{font-size:min(30px,8.4vw)!important}}
 '''
     open(f'{OUT}/assets/css/site.css', 'w', encoding='utf-8').write(css)
