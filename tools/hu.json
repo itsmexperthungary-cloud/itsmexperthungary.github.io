@@ -153,5 +153,7 @@
  "When you book a call": "Ha időpontot foglal",
  "Intro calls are booked on a Google Calendar booking page, a service of Google. When you book, I receive your name, your email address and, if you add one, a short note about what you would like to discuss. Google Calendar also creates a Google Meet link for the call. I use these details only to hold the call and to follow up on it. The legal basis is the same as for emails (GDPR Article 6(1)(b) and (f)). I delete the booking within one year after the call, unless it leads to a contract. For the booking page itself, see the": "A bemutatkozó beszélgetésekre a Google Naptár foglalási oldalán lehet időpontot foglalni, amely a Google szolgáltatása. Foglaláskor megkapom az Ön nevét, e-mail-címét és – ha megad ilyet – egy rövid megjegyzést arról, miről szeretne beszélni. A Google Naptár a beszélgetéshez Google Meet-linket is létrehoz. Ezeket az adatokat kizárólag a beszélgetés megtartására és az azt követő kapcsolattartásra használom. A jogalap ugyanaz, mint az e-maileknél (GDPR 6. cikk (1) bekezdés b) és f) pont). A foglalást a beszélgetést követő egy éven belül törlöm, kivéve, ha szerződés jön létre. A foglalási oldalra vonatkozóan lásd",
  "Google Privacy Policy": "a Google adatvédelmi irányelveit",
- "Service&nbsp;management that people actually use.": "Folyamatok, amelyeket az emberek valóban használnak."
+ "Service&nbsp;management that people actually use.": "Folyamatok, amelyeket az emberek valóban használnak.",
+ "Connect on": "Kapcsolódjunk a",
+ "LinkedIn": "LinkedInen"
 }

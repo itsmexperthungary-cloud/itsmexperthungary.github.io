@@ -21,6 +21,7 @@ PAGES = {
 }
 LINKS = {'Main.dc.html': './', 'HealthCheck.dc.html': 'health-check.html', 'Privacy.dc.html': 'privacy.html'}
 BLOBS = {
+    '335d4c1bc800bbaa0758325b5cc2dd52': ('icons/linkedin.png', 'assets/img/linkedin.png'),
     '6c8e5759d1e7a3b64f05a6070c655941': ('krisztina-juhasz-portrait.jpg', 'assets/img/portrait.jpg'),
     '33f33fc8aa091cdfde8ae78a6dbffbb7': ('krisztina-juhasz-at-work.jpg', 'assets/img/at-work.jpg'),
     '92b02e9d56b2268a377ae2434e75f973': ('krisztina-juhasz-books.jpg', 'assets/img/books.jpg'),
@@ -214,7 +215,7 @@ body{margin:0;background:#FFFFFF}
 img{max-width:100%}
 a{color:#8E2F3C}a:hover{color:#6E2430}
 @media (max-width:640px){p,li span,h1,h2,h3{text-align:left!important}}
-h1,h2,h3{overflow-wrap:break-word;max-width:100%;height:auto!important}
+h1,h2,h3{overflow-wrap:break-word;max-width:100%!important;height:auto!important}
 @media (max-width:640px){html[lang=hu] h1{font-size:34px!important}}
 a[style*="min-height: 52px"]{padding-top:10px!important;padding-bottom:10px!important;box-sizing:border-box}
 @media (max-width:640px){div[style*="flex-direction: column; align-items: flex-end"]{align-items:flex-start!important}div[style*="justify-content: flex-end"]{justify-content:flex-start!important}}
