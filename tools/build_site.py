@@ -19,7 +19,24 @@ PAGES = {
     'Privacy.dc.html': ('privacy.html',
         'Privacy notice and legal notice for the website of A. Krisztina Juhász.'),
 }
-LINKS = {'Main.dc.html': './', 'HealthCheck.dc.html': 'health-check.html', 'Privacy.dc.html': 'privacy.html'}
+PAGES.update({
+    'Main-HU.dc.html': ('hu/index.html',
+        'ITSM folyamattanácsadó és ITIL-tréner. IT service management folyamatokat építek fel és alakítok át, és vezetem a szervezeti változást, amitől tartósak maradnak.'),
+    'HealthCheck-HU.dc.html': ('hu/health-check.html',
+        'Ötnapos, fix scope-ú ITSM health check: interjúk, ITIL 4 alapú maturity snapshot és három azonnal megvalósítható prioritás.'),
+    'Privacy-HU.dc.html': ('hu/privacy.html',
+        'A. Krisztina Juhász weboldalának adatkezelési tájékoztatója és impresszuma.'),
+})
+SITE_PATH = {src: out for src, (out, _) in PAGES.items()}
+
+def rel_link(from_out, to_out):
+    """Relative href from one output page to another (both relative to the site root)."""
+    up = '../' * from_out.count('/')
+    target = to_out[:-len('index.html')] if to_out.endswith('index.html') else to_out
+    return (up + target) or './'
+
+def twin(src):
+    return src.replace('-HU.dc.html', '.dc.html') if '-HU' in src else src.replace('.dc.html', '-HU.dc.html')
 BLOBS = {
     '335d4c1bc800bbaa0758325b5cc2dd52': ('icons/linkedin.png', 'assets/img/linkedin.png'),
     '6c8e5759d1e7a3b64f05a6070c655941': ('krisztina-juhasz-portrait.jpg', 'assets/img/portrait.jpg'),
@@ -108,7 +125,7 @@ def page_html(src_name):
     body = body.replace('{{accent}}', ACCENT)
     body = body.replace('onClick="{{prev}}"', 'data-slide="-1"').replace('onClick="{{next}}"', 'data-slide="1"')
     # badge tiles without a verification link yet: not clickable, no "Verify" label
-    body = re.sub(r'<a href="#verify" (style="[^"]*")>(.*?)<span style="margin-top: auto;[^"]*">Verify ↗</span></a>',
+    body = re.sub(r'<a href="#verify" (style="[^"]*")>(.*?)<span style="margin-top: auto;[^"]*">(?:Verify|Ellenőrzés) ↗</span></a>',
                   lambda m: f'<div {m.group(1)}>{m.group(2)}</div>', body, flags=re.S)
     if 'cert-track' in body:
         body += '''
@@ -126,11 +143,15 @@ document.querySelectorAll('[data-slide]').forEach(function (b) {
         body = body.replace(f'/_blob/{bid}', path)
     if '/_blob/' in body:
         raise SystemExit(f'Unknown asset in {src_name}: ' + re.search(r'/_blob/\w+', body).group(0))
-    for k, v in LINKS.items():
-        body = body.replace(f'href="{k}', f'href="{v}')
-    url = BASE + ('' if out_name == 'index.html' else out_name)
+    for k, v in SITE_PATH.items():
+        body = body.replace(f'href="{k}', f'href="{rel_link(out_name, v)}')
+    lang = 'hu' if '-HU' in src_name else 'en'
+    up = '../' * out_name.count('/')
+    url = BASE + (out_name[:-len('index.html')] if out_name.endswith('index.html') else out_name)
+    for bid, (_, path) in BLOBS.items():
+        body = body.replace(f'"{path}', f'"{up}{path}')
     head = f'''<!doctype html>
-<html lang="en">
+<html lang="{lang}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -145,11 +166,11 @@ document.querySelectorAll('[data-slide]').forEach(function (b) {
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="preload" href="assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="{up}favicon.svg" type="image/svg+xml">
+<link rel="icon" href="{up}favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="{up}apple-touch-icon.png">
+<link rel="preload" href="{up}assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{up}assets/css/site.css">
 </head>
 <body>
 '''
@@ -193,7 +214,7 @@ WJ = '\u2060'  # word joiner: invisible, forbids a line break on both sides
 COMPOUND = re.compile(r'(?<=\w)(-|\))(?=[\w(])')
 PHRASES = ['Service management', 'service management', 'Jira Service Management', 'Microsoft 365', 'ITIL 4',
            'Change Enablement', 'Azure DevOps', 'Jira Assets', 'A. Krisztina Juhász', '9+ years', '9+ év',
-           'IT service', 'IT-szolgáltatás']
+           'IT service', 'IT-szolgáltatás', 'IT service management', 'Change Enablement', 'Knowledge Management', 'customer journey', 'stakeholder map', 'operating model', 'continual improvement', 'maturity snapshot', 'Maturity snapshot', 'maturity assessment', 'improvement roadmap', 'service review', 'service owner', 'service desk', 'process onboarding', 'Quality Gate', 'health check']
 def keep_compounds(html):
     """Never split hyphenated words (IT-szervezet, third-party) or fixed phrases across lines."""
     head, sep, body = html.partition('<body')
@@ -216,10 +237,9 @@ img{max-width:100%}
 a{color:#8E2F3C}a:hover{color:#6E2430}
 @media (max-width:640px){p,li span,h1,h2,h3{text-align:left!important}}
 h1,h2,h3{overflow-wrap:break-word;max-width:100%!important;height:auto!important}
-@media (max-width:640px){html[lang=hu] h1{font-size:34px!important}}
 a[style*="min-height: 52px"]{padding-top:10px!important;padding-bottom:10px!important;box-sizing:border-box}
 @media (max-width:640px){div[style*="flex-direction: column; align-items: flex-end"]{align-items:flex-start!important}div[style*="justify-content: flex-end"]{justify-content:flex-start!important}}
-@media (max-width:400px){html[lang=en] h1{font-size:min(30px,8.4vw)!important}}
+@media (max-width:400px){h1{font-size:min(30px,8.4vw)!important}}
 '''
     open(f'{OUT}/assets/css/site.css', 'w', encoding='utf-8').write(css)
     for bid, (local, path) in BLOBS.items():
@@ -227,14 +247,11 @@ a[style*="min-height: 52px"]{padding-top:10px!important;padding-bottom:10px!impo
     os.makedirs(f'{OUT}/hu', exist_ok=True)
     for src in PAGES:
         name, html = page_html(src)
-        page_path = '' if name == 'index.html' else name
-        html = alternates(html, BASE + page_path, BASE + 'hu/' + page_path)
-        hu = make_hu(name, html)
-        html = nav_switch(html, 'hu/' + page_path, 'Magyar', 'hu')
+        en_src = src if '-HU' not in src else twin(src)
+        en_out, hu_out = SITE_PATH[en_src], SITE_PATH[twin(en_src)]
+        strip = lambda p: p[:-len('index.html')] if p.endswith('index.html') else p
+        html = alternates(html, BASE + strip(en_out), BASE + strip(hu_out))
         open(f'{OUT}/{name}', 'w', encoding='utf-8').write(keep_compounds(html))
-        open(f'{OUT}/hu/{name}', 'w', encoding='utf-8').write(keep_compounds(hu))
-    if MISSING:
-        raise SystemExit('Untranslated: ' + json.dumps(sorted(MISSING), ensure_ascii=False, indent=1))
     og_image()
     icons()
     print('built', sorted(os.listdir(OUT)))
