@@ -28,7 +28,8 @@
 <header style="position: sticky; top: 0; z-index: 50; border-bottom: 1px solid #E7DFD7; background: #FFFFFF">
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
 <a href="./" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 23px; color: #1B2A47; text-decoration: none; letter-spacing: -0.01em">A. Krisztina Juhász</a>
-<nav aria-label="Fő navigáció" style="display: flex; flex-wrap: wrap; align-items: center; gap: 28px; font-size: 15px; font-weight: 500">
+<button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Menü"><svg class="i-open" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg><svg class="i-close" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+<nav id="site-nav" aria-label="Fő navigáció" style="display: flex; flex-wrap: wrap; align-items: center; gap: 28px; font-size: 15px; font-weight: 500">
 <a href="./" style="color: #444650; text-decoration: none">← Vissza a főoldalra</a>
 <a href="../privacy.html" lang="en" hreflang="en" aria-label="English version" title="English version" style="display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px"><svg aria-hidden="true" width="30" height="20" viewBox="0 0 60 40" style="display: block; border-radius: 3px; box-shadow: 0 0 0 1px #D9CFC6"><rect width="60" height="40" fill="#012169"></rect><path d="M0,0 L60,40 M60,0 L0,40" stroke="#FFFFFF" stroke-width="8"></path><path d="M0,0 L30,20 M60,0 L30,20 M0,40 L30,20 M60,40 L30,20" stroke="#C8102E" stroke-width="3"></path><path d="M30,0 V40 M0,20 H60" stroke="#FFFFFF" stroke-width="12"></path><path d="M30,0 V40 M0,20 H60" stroke="#C8102E" stroke-width="7"></path></svg></a>
 </nav>
@@ -103,5 +104,15 @@
 </footer>
 
 </div>
+<script>
+(function () {
+  var h = document.querySelector('header'), b = h && h.querySelector('.menu-toggle');
+  if (!b) return;
+  function set(open) { h.classList.toggle('menu-open', open); b.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+  b.addEventListener('click', function () { set(!h.classList.contains('menu-open')); });
+  h.querySelectorAll('nav a').forEach(function (a) { a.addEventListener('click', function () { set(false); }); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') set(false); });
+})();
+</script>
 </body>
 </html>

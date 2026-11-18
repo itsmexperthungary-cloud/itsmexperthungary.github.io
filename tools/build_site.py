@@ -130,6 +130,24 @@ def page_html(src_name):
     # badge tiles without a verification link yet: not clickable, no "Verify" label
     body = re.sub(r'<a href="#verify" (style="[^"]*")>(.*?)<span style="margin-top: auto;[^"]*">(?:Verify|Ellenőrzés) ↗</span></a>',
                   lambda m: f'<div {m.group(1)}>{m.group(2)}</div>', body, flags=re.S)
+    lang_hu = '-HU' in src_name
+    toggle = ('<button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="'
+              + ('Menü' if lang_hu else 'Menu') + '">'
+              '<svg class="i-open" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>'
+              '<svg class="i-close" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>'
+              '</button>\n')
+    body = re.sub(r'<nav aria-label="([^"]+)"', lambda m: toggle + f'<nav id="site-nav" aria-label="{m.group(1)}"', body, count=1)
+    body += '''
+<script>
+(function () {
+  var h = document.querySelector('header'), b = h && h.querySelector('.menu-toggle');
+  if (!b) return;
+  function set(open) { h.classList.toggle('menu-open', open); b.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+  b.addEventListener('click', function () { set(!h.classList.contains('menu-open')); });
+  h.querySelectorAll('nav a').forEach(function (a) { a.addEventListener('click', function () { set(false); }); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') set(false); });
+})();
+</script>'''
     if 'cert-track' in body:
         body += '''
 <script>
@@ -245,13 +263,20 @@ h1{text-wrap:balance}
 h1,h2,h3{overflow-wrap:break-word;max-width:100%!important;height:auto!important}
 a[style*="min-height: 52px"]{padding-top:10px!important;padding-bottom:10px!important;box-sizing:border-box}
 @media (max-width:640px){div[style*="flex-direction: column; align-items: flex-end"]{align-items:flex-start!important}div[style*="justify-content: flex-end"]{justify-content:flex-start!important}}
+.menu-toggle{display:none}
 @media (max-width:640px){
 header>div{padding:10px 16px!important;gap:8px!important;flex-wrap:nowrap!important}
 header>div>a:first-child{font-size:18px!important;white-space:nowrap}
-header nav{gap:6px!important;flex-wrap:nowrap!important}
-header nav a[style*="background"]{padding:0 14px!important;min-height:40px!important;white-space:nowrap}
-header nav a[hreflang]{min-width:40px!important}
-header nav a[href^="#"]:not([style*="background"]),header nav a[href="./"],header nav a[href="../"]{display:none!important}
+.menu-toggle{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin-left:auto;padding:0;border:1px solid #CFC4BA;border-radius:8px;background:#FFFFFF;color:#1B2A47;cursor:pointer}
+.menu-toggle .i-close{display:none}
+header.menu-open .menu-toggle .i-open{display:none}
+header.menu-open .menu-toggle .i-close{display:block}
+header nav{display:none!important}
+header.menu-open nav{display:flex!important;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch!important;gap:0!important;padding:8px 16px 16px;background:#FFFFFF;border-bottom:1px solid #E7DFD7;box-shadow:0 12px 24px rgba(27,42,71,.08)}
+header.menu-open nav a{min-height:48px;display:flex!important;align-items:center;font-size:17px;border-bottom:1px solid #F0EAE4}
+header.menu-open nav a[style*="background"]{justify-content:center;margin-top:12px;border-bottom:0}
+header.menu-open nav a[hreflang]{justify-content:flex-start!important;gap:12px;border-bottom:0;margin-top:4px;text-decoration:none}
+header.menu-open nav a[hreflang]::after{content:attr(title);color:#444650;font-weight:500}
 }
 @media (max-width:400px){h1{font-size:min(30px,8.4vw)!important}}
 '''
