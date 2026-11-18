@@ -46,7 +46,7 @@ BLOBS = {
     '33f33fc8aa091cdfde8ae78a6dbffbb7': ('krisztina-juhasz-at-work.jpg', 'assets/img/at-work.jpg'),
     '92b02e9d56b2268a377ae2434e75f973': ('krisztina-juhasz-books.jpg', 'assets/img/books.jpg'),
     '4aa089631036ff62b45338bb80f6aa7c': ('krisztina-juhasz-health-check-crop.jpg', 'assets/img/health-check.jpg'),
-    '257e101c1156cd96bd268366c643cb98': (None, 'assets/A_Krisztina_Juhasz_CV.pdf'),
+    '071d3c82cd5f6b36fe4f0e91377a0543': (None, 'assets/A_Krisztina_Juhasz_CV.pdf'),
     'a397690d0bb930f1b60abb7ead28d4f5': ('badges/az-900.png', 'assets/img/badges/az-900.png'),
     '7b0a708930439e6dbda676366460a64c': ('badges/ab-730.png', 'assets/img/badges/ab-730.png'),
     '4bef5be650a643d98f39d5bc9dfa9bfa': ('badges/itil4-strategic-leader-hd.png', 'assets/img/badges/itil4-strategic-leader.png'),
